@@ -1,0 +1,16 @@
+[package]
+name = "bookmark_manager"
+version = "0.1.0"
+description = "A purpose built bookmark manager for the Cult of Sam Audiobook Player"
+authors = ["Sam Miller <contact.melephas@gmail.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+serde = "1.0.123"
+serde_derive = "1.0.123"
+
+serde_yaml = "0.8.15"
+
+clap = "2.33.3"
