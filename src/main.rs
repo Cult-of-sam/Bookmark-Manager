@@ -19,10 +19,18 @@ use std::{
         Display,
         Formatter,
     },
-    fs::OpenOptions,
+    fs::{
+        File,
+        OpenOptions,
+    },
+    io::{
+        Seek,
+        SeekFrom,
+        stdout,
+        Write,
+    },
     path::Path,
 };
-use std::io::{Seek, SeekFrom};
 
 /*
 1. Add/update bookmark(if it already exists)
@@ -40,6 +48,11 @@ fn main() -> Result<(), String> {
             .value_name("FILE")
             .help("The file to read/write to")
             .default_value("bookmarks"))
+        .arg(Arg::with_name("output")
+            .long("output-file")
+            .value_name("FILE")
+            .help("The file to write the output to")
+            .default_value("-"))
         .subcommand(SubCommand::with_name("add")
             .about("Add a new bookmark")
             .arg(Arg::with_name("name")
@@ -80,7 +93,15 @@ fn main() -> Result<(), String> {
 
     match return_value {
         Ok(Some(val)) => {
-            println!("{:?}", val);
+            let output = value_t!(matches, "output", String).unwrap_or("-".into());
+
+            let mut output_writer: Box<dyn Write> = if output == "-" {
+                Box::new(stdout())
+            } else {
+                Box::new(File::create(output).unwrap())
+            };
+
+            writeln!(&mut output_writer, "{:?}", val).unwrap();
             Ok(())
         },
         Ok(None) => Ok(()),
